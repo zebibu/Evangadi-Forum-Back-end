@@ -15,7 +15,7 @@ const dbconnection = require("./DB/DbConfig");
 const userRoutes = require("./routes/userRoute");
 
 // json middleware to extract json data
-app.use(express.json())
+app.use(express.json());
 
 // user routes middleware
 app.use("/api/users", userRoutes);
@@ -27,13 +27,12 @@ app.use("/api/users", userRoutes);
 async function start() {
   try {
     const result = await dbconnection.execute("select 'test' ");
-    app.listen(port)
-    console.log("✅ Database connected and test query executed");
-    console.log(`listeinig on ${port}`)
+    app.listen(port);
+    console.log("Database connected and test query executed");
+    console.log(`listeinig on ${port}`);
   } catch (error) {
     console.log(error.message);
   }
 }
 
 start();
-

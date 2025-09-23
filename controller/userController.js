@@ -18,20 +18,19 @@ async function register(req, res) {
     );
 
     if (user.length > 0) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ msg: "user already registered" });
     }
 
     if (password.length <= 8) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ msg: "password must be at least 8 characters" });
     }
 
     //encrypt the password
     const salt = await bycrypt.genSalt(10);
-
     const hashedPassword = await bycrypt.hash(password, salt);
 
     await dbconnection.query(
@@ -51,10 +50,14 @@ async function register(req, res) {
 
 async function login(req, res) {
   const { email, password } = req.body;
-  if(!email || !password) {
-    return res.status(StatusCodes.BAD_REQUEST).json({msg:"please enter all required fields"}); 
+  if (!email || !password) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({msg: "please enter all required fields"});
   }
 }
+
+
 
 async function checkUser(req, res) {
   res.send("check user");
