@@ -3,31 +3,37 @@ const app = express();
 
 const port = 5000;
 
+//db connection
+
+const dbconnection = require("./DB/DbConfig");
+
 // app.get("/", (req, res) => {
 //   res.send("welcome");
 // });
 
-//Registration route
+// user router middleware file
+const userRoutes = require("./routes/userRoute");
 
-app.post("/api/users/register", (req, res) => {
-    res.send("register user")
-})
+// json middleware to extract json data
+app.use(express.json())
 
-//Login users
-app.post("/api/users/login", (req, res) => {
-  res.send("login user");
-});
+// user routes middleware
+app.use("/api/users", userRoutes);
 
-//check users
+//question router middleware
 
-app.get("/api/users/check", (req, res) => {
-    res.send("check user")
-})
+//answer router middleware
 
-app.listen(port, (err) => {
-  if (err) {
-    console.log(err.message);
-  } else {
-    console.log(`listen on ${port}`);
+async function start() {
+  try {
+    const result = await dbconnection.execute("select 'test' ");
+    app.listen(port)
+    console.log("✅ Database connected and test query executed");
+    console.log(`listeinig on ${port}`)
+  } catch (error) {
+    console.log(error.message);
   }
-});
+}
+
+start();
+
