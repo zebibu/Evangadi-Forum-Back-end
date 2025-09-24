@@ -4,19 +4,21 @@ const jwt = require("jsonwebtoken");
 async function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
+  if (!authHeader || !authHeader.startsWith("Bearer")) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
       .json({ msg: "Authentication invalid" });
   }
 
+  const token = authHeader.split(" ")[1];
+  console.log(authHeader);
+  console.log(token);
+
   try {
-    const {username, userid} = jwt.verify(authHeader, "secret"); 
-    req.user = { username, userid}
-    // return res.status(StatusCodes.OK).json({ data }); 
+    const { username, userid } = jwt.verify(token, "secret");
+    req.user = { username, userid };
 
-
-    next()
+    next(); 
   } catch (error) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
