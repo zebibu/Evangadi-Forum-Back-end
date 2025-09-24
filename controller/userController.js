@@ -49,15 +49,42 @@ async function register(req, res) {
 }
 
 async function login(req, res) {
-  const { email, password } = req.body;
+  const { email, password } = req.body || {};
+
   if (!email || !password) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({msg: "please enter all required fields"});
+      .json({ msg: "please enter all required fields" });
+  }
+  try {
+    const [user] = await dbconnection.query(
+      "select username,userid,password from users where email = ? ",
+      [email]
+    );
+    if (user.length == 0) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "invalid credential" });
+    }
+    // decrypte password or compare password
+    const isMatch = await bycrypt.compare(password, user[0].password);
+
+    if (!isMatch) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ msg: "invalid credential" });
+    }
+    return res.json({ user });
+
+
+  } 
+  catch (error) {
+    console.log(error.message);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ msg: "Something went wrong, try again later" });
   }
 }
-
-
 
 async function checkUser(req, res) {
   res.send("check user");
